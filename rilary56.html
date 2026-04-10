@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Termômetro e Estações</title>
+    <style>
+        body { font-family: sans-serif; transition: 0.5s; text-align: center; padding: 50px; }
+        .frio { background-color: #add8e6; color: #000; }
+        .agradavel { background-color: #90ee90; color: #000; }
+        .calor { background-color: #ff6347; color: #fff; }
+        img { width: 300px; border-radius: 15px; margin-top: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body id="corpo">
+
+    <h1>Monitor de Clima</h1>
+    <div id="resultado"></div>
+
+    <script>
+        let celsius = parseFloat(prompt("Digite a temperatura em Celsius:"));
+        let dia = parseInt(prompt("Digite o dia (1-31):"));
+        let mes = parseInt(prompt("Digite o mês (1-12):"));
+
+        let fahrenheit = (celsius * 1.8) + 32;
+
+        let tema = "";
+        let statusTemp = "";
+
+        if (celsius >= -5 && celsius <= 15) {
+            tema = "frio";
+            statusTemp = "FRIO";
+        } else if (celsius >= 16 && celsius <= 25) {
+            tema = "agradavel";
+            statusTemp = "AGRADÁVEL";
+        } else if (celsius >= 26) {
+            tema = "calor";
+            statusTemp = "CALOR";
+        }
+
+        if (tema !== "") {
+            document.getElementById("corpo").className = tema;
+        }
+
+        let dataRef = (mes * 100) + dia;
+        let estacao = "";
+        let imgEstacao = "";
+
+   
+        if (dataRef >= 1221 || dataRef <= 320) {
+            estacao = "Verão";
+            imgEstacao = "https://i.pinimg.com/736x/b9/99/d3/b999d3c9e5f5717cdbca33b733980432.jpg";
+        } else if (dataRef >= 321 && dataRef <= 620) {
+            estacao = "Outono";
+            imgEstacao = "https://i.pinimg.com/1200x/28/b8/05/28b8051ebf725a49cd9fb8bf504696c8.jpg";
+        } else if (dataRef >= 621 && dataRef <= 922) {
+            estacao = "Inverno";
+            imgEstacao = "https://i.pinimg.com/736x/99/45/16/9945168d0dd0915bd28bfe97bfdf9ebd.jpg";
+        } else if (dataRef >= 923 && dataRef <= 1220) {
+            estacao = "Primavera";
+            imgEstacao = "https://i.pinimg.com/736x/71/17/e4/7117e42099f403124d86ff2cc81dc1d8.jpg";
+        }
+
+        document.getElementById("resultado").innerHTML = `
+            <h2>Status: ${statusTemp}</h2>
+            <p>Temperatura: <strong>${celsius}°C</strong> | <strong>${fahrenheit.toFixed(1)}°F</strong></p>
+            <hr>
+            <h3>Estação: ${estacao}</h3>
+            <img src="${imgEstacao}" alt="${estacao}">
+        `;
+    </script>
+
+</body>
+</html>
