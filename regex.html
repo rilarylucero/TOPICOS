@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Validação com Regex</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .campo { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; }
+        input { padding: 5px; width: 250px; }
+        button { padding: 5px 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Exercícios de Validação (Regex)</h2>
+
+    <div class="campo">
+        <label>1. CPF (999.999.999-99):</label>
+        <input type="text" id="cpf" placeholder="000.000.000-00">
+        <button onclick="validar('cpf', /^(\d{3}\.\d{3}\.\d{3}-\d{2})$/)">Validar</button>
+    </div>
+
+    <div class="campo">
+        <label>2. Senha (8+ dígitos, 1 Maiúscula):</label>
+        <input type="password" id="senha">
+        <button onclick="validar('senha', /^(?=.*[A-Z]).{8,}$/)">Validar</button>
+    </div>
+
+    <div class="campo">
+        <label>3. E-mail (@ e .com):</label>
+        <input type="text" id="email" placeholder="exemplo@email.com">
+        <button onclick="validar('email', /^[a-z0-9.]+@[a-z0-9]+\.com$/)">Validar</button>
+    </div>
+
+    <div class="campo">
+        <label>4. Apenas Números (sem letras/símbolos):</label>
+        <input type="text" id="num">
+        <button onclick="validar('num', /^[0-9]+$/)">Validar</button>
+    </div>
+
+    <script>
+        function validar(id, regex) {
+            const valor = document.getElementById(id).value;
+    
+            if (regex.test(valor)) {
+                alert("✅ Sucesso: O campo " + id + " está correto!");
+            } else {
+                alert("❌ Erro: O formato do campo " + id + " é inválido.");
+            }
+        }
+    </script>
+
+</body>
+</html>
