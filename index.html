@@ -24,7 +24,6 @@
             height: 100vh;
         }
 
-        /* Container do Chat */
         .chat-container {
             width: 400px;
             max-width: 90%;
@@ -37,7 +36,6 @@
             overflow: hidden;
         }
 
-        /* Cabeçalho */
         .chat-header {
             background-color: var(--primary-color);
             color: white;
@@ -68,7 +66,6 @@
             opacity: 0.8;
         }
 
-        /* Área de Mensagens */
         .chat-messages {
             flex: 1;
             padding: 16px;
@@ -100,12 +97,11 @@
             border-top-right-radius: 2px;
         }
 
-        /* Área de Sugestões (Menu de Perguntas) */
         .suggestions-container {
             padding: 8px 16px;
             background-color: #fafafa;
             border-top: 1px solid #eee;
-            display: flex;
+            display: none;
             flex-wrap: wrap;
             gap: 8px;
         }
@@ -126,7 +122,6 @@
             color: white;
         }
 
-        /* Campo de Entrada de Texto */
         .chat-input-area {
             display: flex;
             padding: 12px;
@@ -172,11 +167,11 @@
 
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
-                Olá, jogador! Eu sou o <strong>PixelBot</strong>, seu assistente de jogos. Escolha uma das perguntas abaixo ou digite sua dúvida! 🕹️
+                Olá! Qual é o seu nome? 🕹️
             </div>
         </div>
 
-        <div class="suggestions-container">
+        <div class="suggestions-container" id="suggestions">
             <button class="suggestion-btn" onclick="sendSuggestion('Me indique um jogo de RPG?')">Me indique um RPG</button>
             <button class="suggestion-btn" onclick="sendSuggestion('Qual o melhor jogo multiplayer?')">Melhor Multiplayer</button>
             <button class="suggestion-btn" onclick="sendSuggestion('Como melhorar minha mira?')">Melhorar a Mira</button>
@@ -185,7 +180,7 @@
         </div>
 
         <div class="chat-input-area">
-            <input type="text" id="userInput" placeholder="Digite uma mensagem..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="userInput" placeholder="Digite seu nome..." onkeypress="handleKeyPress(event)">
             <button onclick="sendMessage()">➤</button>
         </div>
     </div>
@@ -193,50 +188,60 @@
     <script>
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
+        const suggestionsContainer = document.getElementById('suggestions');
 
-        // Banco de dados de respostas (Mapeamento de perguntas básicas)
+        let userName = "";
+        let etapa = "nome";
+
         const botResponses = {
             "rpg": "Recomendo fortemente o <strong>The Witcher 3: Wild Hunt</strong> ou o desafiador <strong>Elden Ring</strong>! Ambos têm histórias incríveis e mundos gigantescos. ⚔️",
             "multiplayer": "Se você curte tiro tático, o <strong>Valorant</strong> e o <strong>Counter-Strike 2</strong> estão em alta. Se prefere estratégia, vá de <strong>League of Legends</strong> ou <strong>Dota 2</strong>! 🎧",
             "mira": "Para melhorar sua mira, o segredo é consistência! Use softwares como o <em>Aimlabs</em> por 15 minutos antes de jogar e ajuste a sensibilidade do seu mouse para não ficar rápida demais. 🎯",
             "ia": "Nos jogos, a IA (Inteligência Artificial) controla o comportamento dos inimigos, dos companheiros de equipe e até o clima dinâmico do mapa para tornar o desafio mais realista! 🤖",
-            "dificil": "A franquia <strong>Dark Souls</strong> e o jogo <strong>Sekiro: Shadows Die Twice</strong> são famosos por testarem a paciência e os reflexos de qualquer jogador experiente! 💀",
-            "ola": "Olá! Tudo bem? Como posso te ajudar no mundo dos games hoje? 👾",
-            "nome": "Eu sou o PixelBot, seu companheiro virtual de análises e dicas de jogos! 🤖"
+            "dificil": "A franquia <strong>Dark Souls</strong> e o jogo <strong>Sekiro: Shadows Dev Twice</strong> são famosos por testarem a paciência e os reflexos de qualquer jogador experiente! 💀",
+            "ajuda": "Eu posso te indicar jogos novos, explicar conceitos de IA ou te dar dicas de treino de mira! O que prefere? 🕹️",
+            "gosta": "Eu sou um robô, então gosto de todos! Mas os meus algoritmos adoram jogos de estratégia e ficção científica. E você? 👾"
         };
 
-        // Função para adicionar mensagens na tela
         function appendMessage(text, sender) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender);
             messageElement.innerHTML = text;
             chatMessages.appendChild(messageElement);
-            
-            // Rola a tela automaticamente para a última mensagem
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // Processa a resposta do robô
         function processBotResponse(userText) {
-            // Conversão para minúsculas para facilitar a busca por palavra-chave
             const text = userText.toLowerCase();
-            let reply = "Desculpe, ainda estou aprendendo sobre esse assunto. Tente clicar em um dos botões de sugestão! 🎮";
+            let reply = `Desculpe, ainda estou aprendendo sobre esse assunto. Tente usar o menu de botões abaixo, ${userName}! 🎮`;
+
+            if (etapa === "nome") {
+                userName = userText;
+                etapa = "conversar";
+                
+                reply = `Olá <strong>${userName}</strong>, seja bem-vindo(a)! Me chamo <strong>PixelBot</strong>, seu assistente gamer. Como posso te ajudar hoje? Que tipos de jogos você gosta? 🎮`;
+                
+                setTimeout(() => {
+                    appendMessage(reply, 'bot');
+                    userInput.placeholder = "Digite uma mensagem...";
+                    suggestionsContainer.style.display = "flex";
+                }, 500);
+                return;
+            }
 
             if (text.includes('rpg')) reply = botResponses.rpg;
             else if (text.includes('multiplayer') || text.includes('competitivo')) reply = botResponses.multiplayer;
             else if (text.includes('mira') || text.includes('treinar')) reply = botResponses.mira;
             else if (text.includes('ia') || text.includes('inteligencia')) reply = botResponses.ia;
             else if (text.includes('dificil') || text.includes('desafio')) reply = botResponses.dificil;
-            else if (text.includes('olá') || text.includes('ola') || text.includes('oi')) reply = botResponses.ola;
-            else if (text.includes('nome') || text.includes('quem é você')) reply = botResponses.nome;
+            else if (text.includes('ajudar') || text.includes('ajuda') || text.includes('o que você faz')) reply = botResponses.ajuda;
+            else if (text.includes('gosta') || text.includes('tipo de jogo') || text.includes('seu jogo')) reply = botResponses.gosta;
 
-            // Simula um pequeno atraso para parecer digitação humana
             setTimeout(() => {
                 appendMessage(reply, 'bot');
             }, 500);
         }
 
-        // Envia a mensagem digitada pelo usuário
         function sendMessage() {
             const text = userInput.value.trim();
             if (text === "") return;
@@ -246,14 +251,12 @@
             processBotResponse(text);
         }
 
-        // Atalho para enviar ao apertar a tecla Enter
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
         }
 
-        // Função ativada pelos botões de sugestão rápida
         function sendSuggestion(text) {
             appendMessage(text, 'user');
             processBotResponse(text);
